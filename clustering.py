@@ -24,7 +24,7 @@ import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
 from sklearn.cluster import KMeans
 
-client = Client('EddVzZblDuedZlr1E2UCMKx83Uf5djw9LPtzoIqJDHgrIngRE6AW5irkRQYTLxvi', '1f5OGwgXzY4tGx9SJMORzKXsK60hksFI60d9LWTyLtj03Xm2iljKawNAopDvuUjK',{"verify": False, "timeout": 20})
+client = Client('Key', 'Secret Key',{"verify": False, "timeout": 20})
 
 def symbols():
 
