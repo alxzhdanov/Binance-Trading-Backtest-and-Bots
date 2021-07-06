@@ -25,7 +25,7 @@ from sklearn import linear_model
 from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import SVC
 
-client = Client('EddVzZblDuedZlr1E2UCMKx83Uf5djw9LPtzoIqJDHgrIngRE6AW5irkRQYTLxvi', '1f5OGwgXzY4tGx9SJMORzKXsK60hksFI60d9LWTyLtj03Xm2iljKawNAopDvuUjK',{"verify": False, "timeout": 20})
+client = Client('Binance Key', 'Binance Secret Key',{"verify": False, "timeout": 20})
 
 def symbols():
 
