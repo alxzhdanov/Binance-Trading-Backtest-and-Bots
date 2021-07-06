@@ -171,9 +171,8 @@ def model(symbol):
     
     return pred, df
 
-def orders():
+def orders(symbol):
     
-    symbol = 'VET'
     pred, df = model(symbol)
     
     N = len(df)
@@ -194,7 +193,7 @@ def orders():
     
     
     for i in range(len(acct['userAssets'])):
-        if pred >= 0 and (close_p - open_p) > 0 and acct['userAssets'][i]['asset'] == 'VET' and float(acct['userAssets'][i]['borrowed']) > 11/close_p and (close_p - open_p) > 0 and (close_p - order_p) < 0:
+        if pred >= 0 and (close_p - open_p) > 0 and acct['userAssets'][i]['asset'] == symbol and float(acct['userAssets'][i]['borrowed']) > 11/close_p and (close_p - open_p) > 0 and (close_p - order_p) < 0:
         
             desired = float(acct['userAssets'][i]['borrowed'])
             info = client.get_symbol_info(symbol=cross)
@@ -241,7 +240,7 @@ def orders():
             client.create_margin_order(symbol=cross, side = SIDE_BUY, type = 'MARKET',  quantity= quantity_bs )
         
        
-        if pred < 0 and (close_p - open_p) < 0 and acct['userAssets'][i]['asset'] == 'VET' and float(acct['userAssets'][i]['free']) > 1:
+        if pred < 0 and (close_p - open_p) < 0 and acct['userAssets'][i]['asset'] == symbol and float(acct['userAssets'][i]['free']) > 1:
             desired = float(acct['userAssets'][i]['free'])
             info = client.get_symbol_info(symbol=cross)
             minimum = float(info['filters'][2]['minQty'])
@@ -256,475 +255,28 @@ def orders():
                 quantity_s = quantity_s - minimum
             
             client.create_margin_order(symbol=cross,  side = SIDE_SELL, type = 'MARKET',  quantity=(quantity_s))
-            client.create_margin_loan(asset='VET', amount=quantity_s)
+            client.create_margin_loan(asset=symbol, amount=quantity_s)
         
         
             client.create_margin_order(symbol=cross,  side = SIDE_SELL, type = 'MARKET',  quantity=(quantity_s))
-    
-    symbol = 'ADA'
-    pred, df = model(symbol)
-    
-    N = len(df)
-    
-    cross = symbol + 'USDT'
-    
-    
-    acct = client.get_margin_account()
-    
-    orders = client.get_all_margin_orders(symbol=cross, limit=1)
-    order_p = float(orders[0]['cummulativeQuoteQty'])/float(orders[0]['origQty'])
-    
-    candles = client.get_klines(symbol=cross, interval=Client.KLINE_INTERVAL_5MINUTE)
-    N = len(candles)
-    open_p = float(candles[N-1][1])
-    close_p = float(candles[N-1][4])
-    
-    
-    
-    
-    for i in range(len(acct['userAssets'])):
-        if pred >= 0 and (close_p - open_p) > 0 and acct['userAssets'][i]['asset'] == 'ADA' and float(acct['userAssets'][i]['borrowed']) > 11/close_p and (close_p - open_p) > 0 and (close_p - order_p) < 0:
-        
-            desired = float(acct['userAssets'][i]['borrowed'])
-            info = client.get_symbol_info(symbol=cross)
-            minimum = float(info['filters'][2]['minQty'])
-            maximum = float(info['filters'][2]['maxQty'])
-            stepsize = float(info['filters'][2]['stepSize'])
-            val = desired/stepsize
-            quantity_bs = (minimum*int(val))
-            while quantity_bs < desired:
-                quantity_bs = quantity_bs + minimum
-            
-            while quantity_bs > desired:
-                quantity_bs = quantity_bs - minimum
-                
-        
-        
-      
-            
-            client.create_margin_order(symbol=cross,  side = SIDE_BUY, type = 'MARKET',  sideEffectType = 'AUTO_REPAY', quantity = quantity_bs )
-        
-            client.create_margin_order(symbol=cross, side = SIDE_BUY, type = 'MARKET',  quantity= quantity_bs )
-        
-        if acct['userAssets'][i]['asset'] == 'ADA' and float(acct['userAssets'][i]['borrowed']) > 11/close_p and (close_p - order_p) > 0:
-        
-            desired = float(acct['userAssets'][i]['borrowed'])
-            info = client.get_symbol_info(symbol=cross)
-            minimum = float(info['filters'][2]['minQty'])
-            maximum = float(info['filters'][2]['maxQty'])
-            stepsize = float(info['filters'][2]['stepSize'])
-            val = desired/stepsize
-            quantity_bs = (minimum*int(val))
-            while quantity_bs < desired:
-                quantity_bs = quantity_bs + minimum
-            
-            while quantity_bs > desired:
-                quantity_bs = quantity_bs - minimum
-                
-        
-        
-      
-            
-            client.create_margin_order(symbol=cross,  side = SIDE_BUY, type = 'MARKET',  sideEffectType = 'AUTO_REPAY', quantity = quantity_bs )
-        
-            client.create_margin_order(symbol=cross, side = SIDE_BUY, type = 'MARKET',  quantity= quantity_bs )
-        
-        
-       
-        if pred < 0 and (close_p - open_p) < 0 and acct['userAssets'][i]['asset'] == 'ADA' and float(acct['userAssets'][i]['free']) > 1:
-            desired = float(acct['userAssets'][i]['free'])
-            info = client.get_symbol_info(symbol=cross)
-            minimum = float(info['filters'][2]['minQty'])
-            maximum = float(info['filters'][2]['maxQty'])
-            stepsize = float(info['filters'][2]['stepSize'])
-            val = desired/stepsize
-            quantity_s = (minimum*int(val))
-            while quantity_s < desired:
-                quantity_s = quantity_s + minimum
-                
-            while quantity_s > desired:
-                quantity_s = quantity_s - minimum
-            
-            client.create_margin_order(symbol=cross,  side = SIDE_SELL, type = 'MARKET',  quantity=(quantity_s))
-            client.create_margin_loan(asset='ADA', amount=quantity_s)
-        
-        
-            client.create_margin_order(symbol=cross,  side = SIDE_SELL, type = 'MARKET',  quantity=(quantity_s))
-        
-        
-    symbol = 'MATIC'
-    pred, df = model(symbol)
-    
-    N = len(df)
-    
-    cross = symbol + 'USDT'
-    
-    
-    acct = client.get_margin_account()
-    
-    orders = client.get_all_margin_orders(symbol=cross, limit=1)
-    order_p = float(orders[0]['cummulativeQuoteQty'])/float(orders[0]['origQty'])
-    
-    candles = client.get_klines(symbol=cross, interval=Client.KLINE_INTERVAL_5MINUTE)
-    N = len(candles)
-    open_p = float(candles[N-1][1])
-    close_p = float(candles[N-1][4])
-    
-    
-    
-    
-    for i in range(len(acct['userAssets'])):
-        if pred >= 0 and (close_p - open_p) > 0 and acct['userAssets'][i]['asset'] == 'MATIC' and float(acct['userAssets'][i]['borrowed']) > 11/close_p and (close_p - open_p) > 0 and (close_p - order_p) < 0:
-        
-            desired = float(acct['userAssets'][i]['borrowed'])
-            info = client.get_symbol_info(symbol=cross)
-            minimum = float(info['filters'][2]['minQty'])
-            maximum = float(info['filters'][2]['maxQty'])
-            stepsize = float(info['filters'][2]['stepSize'])
-            val = desired/stepsize
-            quantity_bs = (minimum*int(val))
-            while quantity_bs < desired:
-                quantity_bs = quantity_bs + minimum
-            
-            while quantity_bs > desired:
-                quantity_bs = quantity_bs - minimum
-                
-        
-        
-      
-            
-            client.create_margin_order(symbol=cross,  side = SIDE_BUY, type = 'MARKET',  sideEffectType = 'AUTO_REPAY', quantity = quantity_bs )
-        
-            client.create_margin_order(symbol=cross, side = SIDE_BUY, type = 'MARKET',  quantity= quantity_bs )
-        
-        if acct['userAssets'][i]['asset'] == 'MATIC' and float(acct['userAssets'][i]['borrowed']) > 11/close_p and (close_p - order_p) > 0:
-        
-            desired = float(acct['userAssets'][i]['borrowed'])
-            info = client.get_symbol_info(symbol=cross)
-            minimum = float(info['filters'][2]['minQty'])
-            maximum = float(info['filters'][2]['maxQty'])
-            stepsize = float(info['filters'][2]['stepSize'])
-            val = desired/stepsize
-            quantity_bs = (minimum*int(val))
-            while quantity_bs < desired:
-                quantity_bs = quantity_bs + minimum
-            
-            while quantity_bs > desired:
-                quantity_bs = quantity_bs - minimum
-                
-        
-        
-      
-            
-            client.create_margin_order(symbol=cross,  side = SIDE_BUY, type = 'MARKET',  sideEffectType = 'AUTO_REPAY', quantity = quantity_bs )
-        
-            client.create_margin_order(symbol=cross, side = SIDE_BUY, type = 'MARKET',  quantity= quantity_bs )
-        
-        
-       
-        if pred < 0 and (close_p - open_p) < 0 and acct['userAssets'][i]['asset'] == 'MATIC' and float(acct['userAssets'][i]['free']) > 1:
-            desired = float(acct['userAssets'][i]['free'])
-            info = client.get_symbol_info(symbol=cross)
-            minimum = float(info['filters'][2]['minQty'])
-            maximum = float(info['filters'][2]['maxQty'])
-            stepsize = float(info['filters'][2]['stepSize'])
-            val = desired/stepsize
-            quantity_s = (minimum*int(val))
-            while quantity_s < desired:
-                quantity_s = quantity_s + minimum
-                
-            while quantity_s > desired:
-                quantity_s = quantity_s - minimum
-            
-            client.create_margin_order(symbol=cross,  side = SIDE_SELL, type = 'MARKET',  quantity=(quantity_s))
-            client.create_margin_loan(asset='MATIC', amount=quantity_s)
-        
-        
-            client.create_margin_order(symbol=cross,  side = SIDE_SELL, type = 'MARKET',  quantity=(quantity_s))
-        
-    symbol = 'ETH'
-    pred, df = model(symbol)
-    
-    N = len(df)
-    
-    cross = symbol + 'USDT'
-    
-    
-    acct = client.get_margin_account()
-    
-    orders = client.get_all_margin_orders(symbol=cross, limit=1)
-    order_p = float(orders[0]['cummulativeQuoteQty'])/float(orders[0]['origQty'])
-    
-    candles = client.get_klines(symbol=cross, interval=Client.KLINE_INTERVAL_5MINUTE)
-    N = len(candles)
-    open_p = float(candles[N-1][1])
-    close_p = float(candles[N-1][4])
-    
-    
-    
-    
-    for i in range(len(acct['userAssets'])):
-        if pred >= 0 and (close_p - open_p) > 0 and acct['userAssets'][i]['asset'] == 'ETH' and float(acct['userAssets'][i]['borrowed']) > 11/close_p and (close_p - open_p) > 0 and (close_p - order_p)< 0:
-        
-            desired = float(acct['userAssets'][i]['borrowed'])
-            info = client.get_symbol_info(symbol=cross)
-            minimum = float(info['filters'][2]['minQty'])
-            maximum = float(info['filters'][2]['maxQty'])
-            stepsize = float(info['filters'][2]['stepSize'])
-            val = desired/stepsize
-            quantity_bs = (minimum*int(val))
-            while quantity_bs < desired:
-                quantity_bs = quantity_bs + minimum
-            
-            while quantity_bs > desired:
-                quantity_bs = quantity_bs - minimum
-                
-        
-        
-      
-            
-            client.create_margin_order(symbol=cross,  side = SIDE_BUY, type = 'MARKET',  sideEffectType = 'AUTO_REPAY', quantity = quantity_bs )
-        
-            client.create_margin_order(symbol=cross, side = SIDE_BUY, type = 'MARKET',  quantity= quantity_bs )
-        
-        if acct['userAssets'][i]['asset'] == 'ETH' and float(acct['userAssets'][i]['borrowed']) > 11/close_p and (close_p - order_p) > 0.:
-        
-            desired = float(acct['userAssets'][i]['borrowed'])
-            info = client.get_symbol_info(symbol=cross)
-            minimum = float(info['filters'][2]['minQty'])
-            maximum = float(info['filters'][2]['maxQty'])
-            stepsize = float(info['filters'][2]['stepSize'])
-            val = desired/stepsize
-            quantity_bs = (minimum*int(val))
-            while quantity_bs < desired:
-                quantity_bs = quantity_bs + minimum
-            
-            while quantity_bs > desired:
-                quantity_bs = quantity_bs - minimum
-                
-        
-        
-      
-            
-            client.create_margin_order(symbol=cross,  side = SIDE_BUY, type = 'MARKET',  sideEffectType = 'AUTO_REPAY', quantity = quantity_bs )
-        
-            client.create_margin_order(symbol=cross, side = SIDE_BUY, type = 'MARKET',  quantity= quantity_bs )
-        
-        
-       
-        if pred < 0 and (close_p - open_p) < 0 and acct['userAssets'][i]['asset'] == 'ETH' and float(acct['userAssets'][i]['free']) > 1:
-            desired = float(acct['userAssets'][i]['free'])
-            info = client.get_symbol_info(symbol=cross)
-            minimum = float(info['filters'][2]['minQty'])
-            maximum = float(info['filters'][2]['maxQty'])
-            stepsize = float(info['filters'][2]['stepSize'])
-            val = desired/stepsize
-            quantity_s = (minimum*int(val))
-            while quantity_s < desired:
-                quantity_s = quantity_s + minimum
-                
-            while quantity_s > desired:
-                quantity_s = quantity_s - minimum
-            
-            client.create_margin_order(symbol=cross,  side = SIDE_SELL, type = 'MARKET',  quantity=(quantity_s))
-            client.create_margin_loan(asset='ETH', amount=quantity_s)
-        
-        
-            client.create_margin_order(symbol=cross,  side = SIDE_SELL, type = 'MARKET',  quantity=(quantity_s))
-        
-   
-    symbol = '1INCH'
-    pred, df = model(symbol)
-    
-    N = len(df)
-    
-    cross = symbol + 'USDT'
-    
-    
-    acct = client.get_margin_account()
-    
-    
-    
-    orders = client.get_all_margin_orders(symbol=cross, limit=1)
-    order_p = float(orders[0]['cummulativeQuoteQty'])/float(orders[0]['origQty'])
-    
-    candles = client.get_klines(symbol=cross, interval=Client.KLINE_INTERVAL_5MINUTE)
-    N = len(candles)
-    open_p = float(candles[N-1][1])
-    close_p = float(candles[N-1][4])
-    
-    
-    
-    
-    for i in range(len(acct['userAssets'])):
-        if pred >= 0 and acct['userAssets'][i]['asset'] == '1INCH' and float(acct['userAssets'][i]['borrowed']) > 11/close_p and (close_p - open_p) > 0 and (close_p - order_p) < 0:
-        
-            desired = float(acct['userAssets'][i]['borrowed'])
-            info = client.get_symbol_info(symbol=cross)
-            minimum = float(info['filters'][2]['minQty'])
-            maximum = float(info['filters'][2]['maxQty'])
-            stepsize = float(info['filters'][2]['stepSize'])
-            val = desired/stepsize
-            quantity_bs = (minimum*int(val))
-            while quantity_bs < desired:
-                quantity_bs = quantity_bs + minimum
-            
-            while quantity_bs > desired:
-                quantity_bs = quantity_bs - minimum
-                
-        
-        
-      
-            
-            client.create_margin_order(symbol=cross,  side = SIDE_BUY, type = 'MARKET',  sideEffectType = 'AUTO_REPAY', quantity = quantity_bs )
-        
-            client.create_margin_order(symbol=cross, side = SIDE_BUY, type = 'MARKET',  quantity= quantity_bs )
-        
-        if acct['userAssets'][i]['asset'] == '1INCH' and float(acct['userAssets'][i]['borrowed']) > 11/close_p and (close_p - order_p)> 0:
-        
-            desired = float(acct['userAssets'][i]['borrowed'])
-            info = client.get_symbol_info(symbol=cross)
-            minimum = float(info['filters'][2]['minQty'])
-            maximum = float(info['filters'][2]['maxQty'])
-            stepsize = float(info['filters'][2]['stepSize'])
-            val = desired/stepsize
-            quantity_bs = (minimum*int(val))
-            while quantity_bs < desired:
-                quantity_bs = quantity_bs + minimum
-            
-            while quantity_bs > desired:
-                quantity_bs = quantity_bs - minimum
-                
-        
-        
-      
-            
-            client.create_margin_order(symbol=cross,  side = SIDE_BUY, type = 'MARKET',  sideEffectType = 'AUTO_REPAY', quantity = quantity_bs )
-        
-            client.create_margin_order(symbol=cross, side = SIDE_BUY, type = 'MARKET',  quantity= quantity_bs )
-        
-        
-       
-        if pred < 0 and (close_p - open_p) < 0 and acct['userAssets'][i]['asset'] == 'XMR' and float(acct['userAssets'][i]['free']) > 1:
-            desired = float(acct['userAssets'][i]['free'])
-            info = client.get_symbol_info(symbol=cross)
-            minimum = float(info['filters'][2]['minQty'])
-            maximum = float(info['filters'][2]['maxQty'])
-            stepsize = float(info['filters'][2]['stepSize'])
-            val = desired/stepsize
-            quantity_s = (minimum*int(val))
-            while quantity_s < desired:
-                quantity_s = quantity_s + minimum
-                
-            while quantity_s > desired:
-                quantity_s = quantity_s - minimum
-            
-            client.create_margin_order(symbol=cross,  side = SIDE_SELL, type = 'MARKET',  quantity=(quantity_s))
-            client.create_margin_loan(asset='1INCH', amount=quantity_s)
-        
-        
-            client.create_margin_order(symbol=cross,  side = SIDE_SELL, type = 'MARKET',  quantity=(quantity_s))
-        
-    symbol = 'XLM'
-    pred, df = model(symbol)
-    
-    N = len(df)
-    
-    cross = symbol + 'USDT'
-    
-    
-    acct = client.get_margin_account()
-    
-    orders = client.get_all_margin_orders(symbol=cross, limit=1)
-    order_p = float(orders[0]['cummulativeQuoteQty'])/float(orders[0]['origQty'])
-    
-    candles = client.get_klines(symbol=cross, interval=Client.KLINE_INTERVAL_5MINUTE)
-    N = len(candles)
-    open_p = float(candles[N-1][1])
-    close_p = float(candles[N-1][4])
-    
-    
-    
-    
-    for i in range(len(acct['userAssets'])):
-        if pred >= 0  and acct['userAssets'][i]['asset'] == 'XLM' and float(acct['userAssets'][i]['borrowed']) > 11/close_p and (close_p - open_p) > 0 and (close_p - order_p) < 0:
-        
-            desired = float(acct['userAssets'][i]['borrowed'])
-            info = client.get_symbol_info(symbol=cross)
-            minimum = float(info['filters'][2]['minQty'])
-            maximum = float(info['filters'][2]['maxQty'])
-            stepsize = float(info['filters'][2]['stepSize'])
-            val = desired/stepsize
-            quantity_bs = (minimum*int(val))
-            while quantity_bs < desired:
-                quantity_bs = quantity_bs + minimum
-            
-            while quantity_bs > desired:
-                quantity_bs = quantity_bs - minimum
-                
-        
-        
-      
-            
-            client.create_margin_order(symbol=cross,  side = SIDE_BUY, type = 'MARKET',  sideEffectType = 'AUTO_REPAY', quantity = quantity_bs )
-        
-            client.create_margin_order(symbol=cross, side = SIDE_BUY, type = 'MARKET',  quantity= quantity_bs )
-        
-        if acct['userAssets'][i]['asset'] == 'XLM' and float(acct['userAssets'][i]['borrowed']) > 11/close_p and (close_p - order_p) > 0:
-        
-            desired = float(acct['userAssets'][i]['borrowed'])
-            info = client.get_symbol_info(symbol=cross)
-            minimum = float(info['filters'][2]['minQty'])
-            maximum = float(info['filters'][2]['maxQty'])
-            stepsize = float(info['filters'][2]['stepSize'])
-            val = desired/stepsize
-            quantity_bs = (minimum*int(val))
-            while quantity_bs < desired:
-                quantity_bs = quantity_bs + minimum
-            
-            while quantity_bs > desired:
-                quantity_bs = quantity_bs - minimum
-                
-        
-        
-      
-            
-            client.create_margin_order(symbol=cross,  side = SIDE_BUY, type = 'MARKET',  sideEffectType = 'AUTO_REPAY', quantity = quantity_bs )
-        
-            client.create_margin_order(symbol=cross, side = SIDE_BUY, type = 'MARKET',  quantity= quantity_bs )
-        
-        
-        
-       
-        if pred < 0 and (close_p - open_p) < 0 and acct['userAssets'][i]['asset'] == 'XLM' and float(acct['userAssets'][i]['free']) > 1:
-            desired = float(acct['userAssets'][i]['free'])
-            info = client.get_symbol_info(symbol=cross)
-            minimum = float(info['filters'][2]['minQty'])
-            maximum = float(info['filters'][2]['maxQty'])
-            stepsize = float(info['filters'][2]['stepSize'])
-            val = desired/stepsize
-            quantity_s = (minimum*int(val))
-            while quantity_s < desired:
-                quantity_s = quantity_s + minimum
-                
-            while quantity_s > desired:
-                quantity_s = quantity_s - minimum
-            
-            client.create_margin_order(symbol=cross,  side = SIDE_SELL, type = 'MARKET',  quantity=(quantity_s))
-            client.create_margin_loan(asset='XLM', amount=quantity_s)
-        
-        
-            client.create_margin_order(symbol=cross,  side = SIDE_SELL, type = 'MARKET',  quantity=(quantity_s))
-        
-    
+
+
     return print(pred)
 
-
+def orders_across_symbols():
+    
+    symbols = ['ADA', 'MATIC', 'BTC', 'ETH', 'XLM']
+    
+    for i in range len(symbols):
+        
+        print(orders(symbols[i])
+              
+    return
 
 
 while '1' == '1':
     
-    print(orders())
+    print(orders_across_symbols())
     
     time.sleep(222)
     
